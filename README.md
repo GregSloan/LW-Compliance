@@ -9,6 +9,8 @@
   There will be a compliance report file for each AWS account configured, and 1 vulnerability report file.
 * All results based on most recent compliance report, inventory seen over last 24 hours, and most recent vulnerability assessments
 * Credentials must be set as environment variables (see OPERATION)
+* If Lacework RBAC is enabled in your tenant, a user (Standard or Service) in the Admin User group is required to run
+  without further input. If using a Power user or Read-Only user, an "aws_accountIds.txt" file is necessary
 
 ## OPERATION:
 
@@ -19,7 +21,11 @@
 * pip install laceworkcdk
 * pip install laceworkreports
 
-Execution:
+### Optional:
+* If running using credentials for a non-Admin user, create "aws_accoundIds.txt" in the same directory with one AWS
+  account ID per line
+
+### Execution:
 `python /path/to/lw_rules_report.py`
 
 # Expected Output:
