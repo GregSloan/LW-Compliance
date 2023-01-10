@@ -10,6 +10,7 @@
 .DS_Store
 
 *.json
+*.txt
 *.pkl
 *.zip
 # Source for the following rules: https://raw.githubusercontent.com/github/gitignore/master/Python.gitignore

@@ -1,8 +1,10 @@
 from lw_helpers import QueryHelper
 import os
+from os.path import exists
 from datetime import datetime, timedelta, timezone
 import json
 
+c_dir = os.path.dirname(__file__)
 # Instantiate API helper class
 lw_queries = QueryHelper(api_key=os.getenv("LW_API_KEY"),
                          api_secret=os.getenv("LW_API_SECRET"),
@@ -38,8 +40,13 @@ for host in vulnerable_hosts.values():
 # todo: Resource data only available via API for AWS - Azure coming
 aws_all_resources = lw_queries.get_inventory(start_time, end_time, 'AwsCompliance')
 
-# get list of configured aws account IDs
-aws_config_accounts = lw_queries.get_aws_config_accounts()
+# If an aws_accountIds.txt file exists, read in account ID list. Otherwise attempt to get configured accounts via API
+aws_config_accounts = []
+if exists(c_dir + '/aws_accountIds.txt'):
+    with open(c_dir + '/aws_accountIds.txt', 'r') as account_file:
+        aws_config_accounts = [line.rstrip() for line in account_file]
+if len(aws_config_accounts) == 0:
+    aws_config_accounts = lw_queries.get_aws_config_accounts()
 
 # Retrieve latest AWS CIS report grouped by resource for each account
 aws_compliance_reports = {}
