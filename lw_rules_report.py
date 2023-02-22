@@ -51,7 +51,9 @@ if len(aws_config_accounts) == 0:
 # Retrieve latest AWS CIS report grouped by resource for each account
 aws_compliance_reports = {}
 for account_id in aws_config_accounts:
-    aws_compliance_reports[account_id] = lw_queries.get_compliance(account_id, 'AWS_CIS_S3')
+    aws_compliance_reports[account_id] = lw_queries.get_compliance(account_id, 'AWS_CIS_14')
+    aws_compliance_reports[account_id] = lw_queries.get_compliance(account_id, 'LW_AWS_SEC_ADD_1_0',
+                                                                   previous_compliance=aws_compliance_reports[account_id])
 
 # merge AWS CIS report data with available resource tagging data
 for account_id, aws_compliance in aws_compliance_reports.items():

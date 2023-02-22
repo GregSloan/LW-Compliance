@@ -58,8 +58,11 @@ class QueryHelper:
                                                                                    'Rule description': description}
         return hosts
 
-    def __process_compliance_data(self, compliance_report):
-        resources = {}
+    def __process_compliance_data(self, compliance_report, previous_compliance):
+        if previous_compliance is None:
+            resources = {}
+        else:
+            resources = previous_compliance
         all_rules = {}
         for rule in compliance_report['data'][0]['recommendations']:
             if 'VIOLATIONS' in rule.keys():
@@ -193,18 +196,16 @@ class QueryHelper:
                 resource_dict[resource['resourceType']] = resource
         return resource_dict
 
-    def get_compliance(self, accountid, report_type):
+    def get_compliance(self, accountid, report_type, previous_compliance=None):
         """
 
         :type accountid: str
         :type report_type: str
+        :type previous_compliance: dict
         """
         compliance = self.lacework_client.reports.get(primary_query_id=accountid, format="json", report_type=report_type)
-        #compliance = self.lacework_client.compliance.get_latest_aws_report(accountid,
-        #                                                                   file_format="json",
-        #                                                                   report_type=report_type)
 
-        return self.__process_compliance_data(compliance)
+        return self.__process_compliance_data(compliance, previous_compliance)
 
     def get_azure_compliance(self, tenantid, subscriptionid, report_type):
         """
