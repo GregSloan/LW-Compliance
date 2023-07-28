@@ -12,16 +12,20 @@ lw_queries = QueryHelper(api_key=os.getenv("LW_API_KEY"),
 
 # Last 24 hours used to timebound searches
 current_time = datetime.now(timezone.utc)
-start_time = current_time - timedelta(hours=24)
+start_time = current_time - timedelta(hours=72)
 end_time = current_time
 
 # Get hosts to use for tag data
 aws_host_inventory = lw_queries.get_inventory(start_time,
                                               end_time,
-                                              'AwsCompliance',
+                                              'AWS',
                                               filters=[{"field": "resourceType",
                                                         "expression": "like",
                                                         "value": "*ec2:instance*"}])
+# aws_host_inventory = lw_queries.get_inventory(start_time,
+#                                               end_time,
+#                                               'AWS'
+#                                              )
 
 # Return all vulnerabilities grouped by host
 vulnerable_hosts = lw_queries.get_host_vulns(start_time,
@@ -29,6 +33,7 @@ vulnerable_hosts = lw_queries.get_host_vulns(start_time,
                                              filters=[{"field": "machineTags.Hostname",
                                                        "expression": "like",
                                                        "value": "ip-10-90*"}])
+
 
 # merge vulnerability data with host tagging data
 # todo: Tag data only available via API for AWS - Azure coming
@@ -38,7 +43,7 @@ for host in vulnerable_hosts.values():
 
 # Retrieve all AWS resources for use in tagging compliance data
 # todo: Resource data only available via API for AWS - Azure coming
-aws_all_resources = lw_queries.get_inventory(start_time, end_time, 'AwsCompliance')
+aws_all_resources = lw_queries.get_inventory(start_time, end_time, 'AWS')
 
 # If an aws_accountIds.txt file exists, read in account ID list. Otherwise attempt to get configured accounts via API
 aws_config_accounts = []
@@ -83,7 +88,7 @@ for account_id, aws_compliance in aws_compliance_reports.items():
     with open('./' + compliance_filename, 'w') as f:
         json.dump(aws_compliance, f)
 
-vuln_filename = "{}vulnerable_hosts.json".format(prefix)
+vuln_filename = "{}_vulnerable_hosts.json".format(prefix)
 with open('./' + vuln_filename, 'w') as f:
     json.dump(vulnerable_hosts, f)
 

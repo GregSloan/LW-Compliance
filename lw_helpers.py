@@ -1,4 +1,5 @@
 from laceworksdk import LaceworkClient
+import laceworksdk
 from laceworkreports import common
 import re
 from laceworkreports.sdk.DataHandlers import (
@@ -131,15 +132,15 @@ class QueryHelper:
 
         return account_ids
 
-    def get_inventory(self, start_time, end_time, dataset, filters=None):
+    def get_inventory(self, start_time, end_time, csp, filters=None):
         """
 
         :type start_time: datetime
         :type end_time: datetime
-        :type dataset: str
+        :type csp: str
         :type filters: list of dict
         """
-        # dataset is "AwsCompliance"
+        # csp is "Aws"
 
         ARN_RE = re.compile('.*Arn.*')
         if filters is None:
@@ -149,11 +150,11 @@ class QueryHelper:
 
         # Query
         inventory = self.lacework_client.inventory.search(json={
-            "timeFilters": {
+            "timeFilter": {
                 "startTime": start_time,
                 "endTime": end_time
             },
-            "dataset": dataset,
+            "csp": csp,
             "filters": filters,
             "returns": ["cloudDetails", "csp", "resourceConfig", "resourceId", "resourceType", "resourceTags"]
         })
