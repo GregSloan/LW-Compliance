@@ -24,10 +24,7 @@ aws_host_inventory = lw_queries.get_inventory(start_time,
                                                         "value": "*ec2:instance*"}])
 
 vulnerable_hosts = lw_queries.get_host_vulns(start_time,
-                                             end_time,
-                                             filters=[{"field": "machineTags.Hostname",
-                                                       "expression": "like",
-                                                       "value": "*ip"}])
+                                             end_time)
 
 
 # merge vulnerability data with host tagging data
